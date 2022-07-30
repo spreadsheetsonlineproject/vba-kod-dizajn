@@ -41,9 +41,31 @@ Public Sub createSumReport(ByRef report_sh As Worksheet, ByRef data_arr As Varia
 End Sub
 
 Private Function sortData(ByRef sum_dict As Object) As Object
+    Dim sorted_coll As New Collection
+    
+    Dim key As Variant
+    Dim lv_coll As Long
+    For Each key In sum_dict
+        If sorted_coll.Count = 0 Then
+            sorted_coll.Add key
+            GoTo next_key
+        End If
+        For lv_coll = 1 To sorted_coll.Count
+            If key < sorted_coll(lv_coll) Then
+                Call sorted_coll.Add(item:=key, before:=lv_coll)
+                GoTo next_key
+            End If
+        Next lv_coll
+        sorted_coll.Add key
+next_key:
+    Next key
+    
     Dim sorted_dict As Object
-    
-    
+    Set sorted_dict = CreateObject("Scripting.Dictionary")
+    Dim item As Variant
+    For Each item In sorted_coll
+        sorted_dict.Add item, sum_dict(item)
+    Next item
     
     Set sortData = sorted_dict
 End Function
